@@ -1,3 +1,4 @@
+// Package cognito provides a wrapper for AWS Cognito user authentication and management.
 package cognito
 
 import (
@@ -14,18 +15,21 @@ import (
 	cognitoTypes "github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
 )
 
+// CognitoClient wraps the AWS Cognito Identity Provider client and configuration.
 type CognitoClient struct {
-	client      *cognitoidentityprovider.Client
-	userPoolID  string
-	clientAppID string
+	client      *cognitoidentityprovider.Client // AWS Cognito client
+	userPoolID  string                         // Cognito User Pool ID
+	clientAppID string                         // Cognito App Client ID
 }
 
+// AuthResponse holds authentication tokens returned from Cognito after login.
 type AuthResponse struct {
-	IdToken      string
-	AccessToken  string
-	RefreshToken string
+	IdToken      string // JWT ID token
+	AccessToken  string // JWT access token
+	RefreshToken string // JWT refresh token
 }
 
+// NewCognitoClientWithCfg creates a new CognitoClient with the given AWS config, user pool ID, and app client ID.
 func NewCognitoClientWithCfg(cfg aws.Config, userPoolID, clientAppID string) (*CognitoClient, error) {
 	return &CognitoClient{
 		client:      cognitoidentityprovider.NewFromConfig(cfg),
@@ -34,6 +38,7 @@ func NewCognitoClientWithCfg(cfg aws.Config, userPoolID, clientAppID string) (*C
 	}, nil
 }
 
+// RegisterUser registers a new user with the given email and password in Cognito.
 func (c *CognitoClient) RegisterUser(ctx context.Context, email, password string) error {
 	input := &cognitoidentityprovider.SignUpInput{
 		ClientId: aws.String(c.clientAppID),
@@ -55,6 +60,7 @@ func (c *CognitoClient) RegisterUser(ctx context.Context, email, password string
 	return nil
 }
 
+// ConfirmUser confirms a user's registration using the provided confirmation code (OTP).
 func (c *CognitoClient) ConfirmUser(ctx context.Context, email, confirmationCode string) (*cognitoidentityprovider.ConfirmSignUpOutput, error) {
 
 	input := &cognitoidentityprovider.ConfirmSignUpInput{
@@ -72,6 +78,7 @@ func (c *CognitoClient) ConfirmUser(ctx context.Context, email, confirmationCode
 	return result, nil
 }
 
+// Login authenticates a user with email and password, returning authentication tokens.
 func (c *CognitoClient) Login(ctx context.Context, email, password string) (*AuthResponse, error) {
 	input := &cognitoidentityprovider.InitiateAuthInput{
 		AuthFlow: "USER_PASSWORD_AUTH",
@@ -94,6 +101,7 @@ func (c *CognitoClient) Login(ctx context.Context, email, password string) (*Aut
 	}, nil
 }
 
+// ExtractSubFromToken extracts the user's sub (unique identifier) from a JWT ID token.
 func (c *CognitoClient) ExtractSubFromToken(ctx context.Context, idToken string) (string, error) {
 	parts := strings.Split(idToken, ".")
 	if len(parts) != 3 {
