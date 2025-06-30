@@ -14,7 +14,6 @@ import (
 	awsConfig "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/mcgigglepop/brilliant-inferno-ruby/server/internal/cognito"
 	"github.com/mcgigglepop/brilliant-inferno-ruby/server/internal/config"
-	"github.com/mcgigglepop/brilliant-inferno-ruby/server/internal/dynamodb"
 	"github.com/mcgigglepop/brilliant-inferno-ruby/server/internal/handlers"
 	"github.com/mcgigglepop/brilliant-inferno-ruby/server/internal/helpers"
 	"github.com/mcgigglepop/brilliant-inferno-ruby/server/internal/render"

@@ -2,10 +2,8 @@
 package handlers
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
-	"strconv"
 	"strings"
 
 	"github.com/mcgigglepop/brilliant-inferno-ruby/server/internal/config"
@@ -220,4 +218,3 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 	m.App.Session.Put(r.Context(), "flash", "login successfully.")
 	http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 }
-
