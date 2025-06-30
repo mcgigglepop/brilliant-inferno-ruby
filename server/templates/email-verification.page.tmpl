@@ -1,0 +1,217 @@
+{{template "base" .}} {{define "BodyClass"}}{{end}}{{define "css"}}
+<style>
+  .otp-input {
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    font-size: 24px;
+    margin-right: 2px;
+    padding: 0;
+  }
+</style>
+{{end}} {{define "content"}}
+<!-- ========== MAIN CONTENT ========== -->
+<main id="content" role="main" class="main">
+  <div
+    class="position-fixed top-0 end-0 start-0 bg-img-start"
+    style="
+      height: 32rem;
+      background-image: url(/static/front/svg/components/card-6.svg);
+    "
+  >
+    <div class="shape shape-bottom zi-1">
+      <svg
+        preserveAspectRatio="none"
+        xmlns="http://www.w3.org/2000/svg"
+        x="0px"
+        y="0px"
+        viewBox="0 0 1921 273"
+      >
+        <polygon fill="#fff" points="0,273 1921,273 1921,0 " />
+      </svg>
+    </div>
+  </div>
+
+  <div class="container py-5 py-sm-7">
+    <a class="d-flex justify-content-center mb-5" href="./index.html">
+      <img
+        class="zi-2"
+        src="/static/front/svg/logos/logo.svg"
+        alt="Image Description"
+        style="width: 8rem"
+      />
+    </a>
+
+    <div class="mx-auto" style="max-width: 30rem">
+      <div class="card card-lg mb-5">
+        <div class="card-body text-center">
+          <form
+            method="post"
+            action="/email-verification"
+            class="js-validate needs-validation"
+            novalidate
+          >
+            <input type="hidden" name="csrf_token" value="{{.CSRFToken}}" />
+            <div class="mb-4">
+              <img
+                class="avatar avatar-xxl avatar-4x3"
+                src="/static/front/svg/illustrations/oc-email-verification.svg"
+                alt="Image Description"
+                data-hs-theme-appearance="default"
+              />
+              <img
+                class="avatar avatar-xxl avatar-4x3"
+                src="/static/front/svg/illustrations-light/oc-email-verification.svg"
+                alt="Image Description"
+                data-hs-theme-appearance="dark"
+              />
+            </div>
+
+            <h1 class="display-5">Verify your email</h1>
+
+            <p class="mb-1">We've sent a link to your email address:</p>
+
+            <span class="d-block text-dark fw-semibold mb-1"
+              >mark@gmail.com</span
+            >
+
+            <p>Please follow the link inside to continue.</p>
+            <div
+              id="otp"
+              class="inputs d-flex flex-row justify-content-center mt-2"
+            >
+              <input
+                class="m-2 text-center form-control otp-input"
+                type="text"
+                name="otpFirst"
+                id="first"
+                maxlength="1"
+              />
+              <input
+                class="m-2 text-center form-control otp-input"
+                type="text"
+                name="otpSecond"
+                id="second"
+                maxlength="1"
+              />
+              <input
+                class="m-2 text-center form-control otp-input"
+                type="text"
+                name="otpThird"
+                id="third"
+                maxlength="1"
+              />
+              <input
+                class="m-2 text-center form-control otp-input"
+                type="text"
+                name="otpFourth"
+                id="fourth"
+                maxlength="1"
+              />
+              <input
+                class="m-2 text-center form-control otp-input"
+                type="text"
+                name="otpFifth"
+                id="fifth"
+                maxlength="1"
+              />
+              <input
+                class="m-2 text-center form-control otp-input"
+                type="text"
+                name="otpSixth"
+                id="sixth"
+                maxlength="1"
+              />
+            </div>
+
+            <div class="mt-4 mb-3">
+              <button type="submit" class="btn btn-primary btn-lg">
+                Verify
+              </button>
+            </div>
+
+            <p>Didn't receive an email? <a href="#">Resend</a></p>
+          </form>
+        </div>
+      </div>
+
+      <div class="position-relative text-center zi-1">
+        <small class="text-cap text-body mb-4"
+          >Trusted by the world's best teams</small
+        >
+
+        <div class="w-85 mx-auto">
+          <div class="row justify-content-between">
+            <div class="col">
+              <img
+                class="img-fluid"
+                src="/static/front/svg/brands/gitlab-gray.svg"
+                alt="Logo"
+              />
+            </div>
+
+            <div class="col">
+              <img
+                class="img-fluid"
+                src="/static/front/svg/brands/fitbit-gray.svg"
+                alt="Logo"
+              />
+            </div>
+
+            <div class="col">
+              <img
+                class="img-fluid"
+                src="/static/front/svg/brands/flow-xo-gray.svg"
+                alt="Logo"
+              />
+            </div>
+
+            <div class="col">
+              <img
+                class="img-fluid"
+                src="/static/front/svg/brands/layar-gray.svg"
+                alt="Logo"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+<!-- ========== END MAIN CONTENT ========== -->
+{{end}} {{define "js"}}
+<script src="/static/front/vendor/hs-toggle-password/dist/js/hs-toggle-password.js"></script>
+<script>
+  const inputs = document.querySelectorAll('.otp-input');
+
+  inputs.forEach((input, index) => {
+    input.addEventListener('input', () => {
+      if (input.value.length === 1 && index < inputs.length - 1) {
+        inputs[index + 1].focus();
+      }
+    });
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && input.value === '' && index > 0) {
+        inputs[index - 1].focus();
+      }
+    });
+  });
+</script>
+<script>
+  (function () {
+    window.onload = function () {
+      // INITIALIZATION OF BOOTSTRAP VALIDATION
+      // =======================================================
+      HSBsValidation.init('.js-validate', {
+        onSubmit: (data) => {},
+      });
+
+      // INITIALIZATION OF TOGGLE PASSWORD
+      // =======================================================
+      new HSTogglePassword('.js-toggle-password');
+    };
+  })();
+</script>
+{{ end }}

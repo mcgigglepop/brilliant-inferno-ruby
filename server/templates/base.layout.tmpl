@@ -1,4 +1,4 @@
-{{define "base_admin"}}
+{{define "base"}}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -7,18 +7,22 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
+    <meta name="csrf-token" content="{{ .CSRFToken }}" />
 
-    <title>Dashboard Template</title>
+    <title>Basic Sign Up | Front - Admin &amp; Dashboard Template</title>
 
     <link rel="shortcut icon" href="./favicon.ico" />
+
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
       rel="stylesheet"
     />
+
     <link
       rel="stylesheet"
       href="/static/front/vendor/bootstrap-icons/font/bootstrap-icons.css"
     />
+
     <link
       rel="preload"
       href="/static/front/css/theme.min.css"
@@ -36,9 +40,7 @@
       type="text/css"
       href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
     />
-
     {{block "css" .}} {{ end }}
-
     <style data-hs-appearance-onload-styles>
       * {
         transition: unset !important;
