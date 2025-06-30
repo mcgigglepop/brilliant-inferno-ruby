@@ -1,3 +1,4 @@
+// Package handlers contains HTTP handler functions for the web application.
 package handlers
 
 import (
@@ -13,18 +14,22 @@ import (
 	"github.com/mcgigglepop/brilliant-inferno-ruby/server/internal/render"
 )
 
+// Repo is the repository used by the handlers.
 var Repo *Repository
 
+// Repository holds the application config and dependencies for handlers.
 type Repository struct {
 	App *config.AppConfig
 }
 
+// NewRepo creates a new Repository with the given app config.
 func NewRepo(a *config.AppConfig) *Repository {
 	return &Repository{
 		App: a,
 	}
 }
 
+// NewHandlers sets the global Repo variable to the provided repository.
 func NewHandlers(r *Repository) {
 	Repo = r
 }
@@ -35,14 +40,18 @@ func NewHandlers(r *Repository) {
 // ////////////////////////////////////////////////////////////
 // ////////////////////////////////////////////////////////////
 
+// LoginGet handles GET requests for the login page.
 func (m *Repository) LoginGet(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, r, "login.page.tmpl", &models.TemplateData{})
 }
 
+// RegisterGet handles GET requests for the registration page.
 func (m *Repository) RegisterGet(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, r, "register.page.tmpl", &models.TemplateData{})
 }
 
+// EmailVerificationGet handles GET requests for the email verification page.
+// Redirects to login if no email is found in session.
 func (m *Repository) EmailVerificationGet(w http.ResponseWriter, r *http.Request) {
 	email := m.App.Session.GetString(r.Context(), "user_email")
 
@@ -55,6 +64,7 @@ func (m *Repository) EmailVerificationGet(w http.ResponseWriter, r *http.Request
 	render.Template(w, r, "email-verification.page.tmpl", &models.TemplateData{})
 }
 
+// DashboardGet handles GET requests for the dashboard page.
 func (m *Repository) DashboardGet(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, r, "dashboard.page.tmpl", &models.TemplateData{})
 }
@@ -65,6 +75,8 @@ func (m *Repository) DashboardGet(w http.ResponseWriter, r *http.Request) {
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
 
+// RegisterPost handles POST requests for user registration.
+// Validates form, registers user with Cognito, and redirects appropriately.
 func (m *Repository) RegisterPost(w http.ResponseWriter, r *http.Request) {
 	if err := m.App.Session.RenewToken(r.Context()); err != nil {
 		m.App.ErrorLog.Println("Session token renewal failed:", err)
@@ -78,7 +90,6 @@ func (m *Repository) RegisterPost(w http.ResponseWriter, r *http.Request) {
 	form := forms.New(r.PostForm)
 
 	form.Required("email", "password")
-
 	form.IsEmail("email")
 
 	if !form.Valid() {
@@ -99,12 +110,15 @@ func (m *Repository) RegisterPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Store user email in session for verification step
 	m.App.Session.Put(r.Context(), "user_email", email)
 
 	m.App.Session.Put(r.Context(), "flash", "Registered successfully.")
 	http.Redirect(w, r, "/email-verification", http.StatusSeeOther)
 }
 
+// EmailVerificationPost handles POST requests for email verification.
+// Validates OTP form, confirms user with Cognito, and redirects appropriately.
 func (m *Repository) EmailVerificationPost(w http.ResponseWriter, r *http.Request) {
 	if err := m.App.Session.RenewToken(r.Context()); err != nil {
 		m.App.ErrorLog.Println("Session token renewal failed:", err)
@@ -132,6 +146,7 @@ func (m *Repository) EmailVerificationPost(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
+	// Concatenate OTP digits from form fields
 	otpCode := strings.TrimSpace(
 		r.Form.Get("otpFirst") +
 			r.Form.Get("otpSecond") +
@@ -149,11 +164,14 @@ func (m *Repository) EmailVerificationPost(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
+	// Remove user email from session after successful verification
 	m.App.Session.Remove(r.Context(), "user_email")
 	m.App.Session.Put(r.Context(), "flash", "Email Verified.")
 	http.Redirect(w, r, "/login", http.StatusSeeOther)
 }
 
+// LoginPost handles POST requests for user login.
+// Validates form, logs in user with Cognito, and sets session tokens.
 func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 	if err := m.App.Session.RenewToken(r.Context()); err != nil {
 		m.App.ErrorLog.Println("Session token renewal failed:", err)
@@ -167,7 +185,6 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 	form := forms.New(r.PostForm)
 
 	form.Required("email", "password")
-
 	form.IsEmail("email")
 
 	if !form.Valid() {
@@ -194,6 +211,7 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 		// handle error
 	}
 
+	// Store user ID and tokens in session
 	m.App.Session.Put(r.Context(), "user_id", sub)
 	m.App.Session.Put(r.Context(), "id_token", auth_response.IdToken)
 	m.App.Session.Put(r.Context(), "access_token", auth_response.AccessToken)
