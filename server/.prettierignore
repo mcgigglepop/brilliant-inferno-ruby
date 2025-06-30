@@ -1,0 +1,43 @@
+static
+.prettierrc
+package.json
+
+# Node modules (stay ugly, stay out)
+node_modules/
+
+# Build output (because nobody needs to see your sins)
+dist/
+build/
+out/
+
+# Dependency garbage
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# Local env files
+.env
+.env.local
+.env.*.local
+
+# OS and editor trash
+.DS_Store
+Thumbs.db
+*.log
+.idea/
+.vscode/
+
+# Coverage reports
+coverage/
+
+# Generated API clients / types
+generated/
+types/generated/
+
+# Ignore public assets if not formatting them
+public/
+
+# Misc
+*.tmp
+*.bak
+*.swp
