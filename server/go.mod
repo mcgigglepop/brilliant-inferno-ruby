@@ -2,7 +2,6 @@ module github.com/mcgigglepop/brilliant-inferno-ruby/server
 
 go 1.23
 
-toolchain go1.23.4
 
 require (
 	github.com/alexedwards/scs/v2 v2.8.0
