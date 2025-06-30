@@ -1,6 +1,7 @@
 static
 .prettierrc
 package.json
+templates/base-admin.layout.tmpl
 
 # Node modules (stay ugly, stay out)
 node_modules/
